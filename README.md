@@ -11,4 +11,7 @@ The $\texttt{data}$ folder includes:
     - monkeypox cases for Italy and United States from mid May to mid September 2022
     
 ## Fit
-The $\texttt{data}$ folder includes 4 subfolders, each one for each application to a different epidemic with the codes for fitting a GLM model with the Richards' curve
+The $\texttt{data}$ folder includes 4 subfolders, each one for each application to a different epidemic with the codes for fitting a GLM model with the Richards' curve.
+
+## Auxiliary
+The $\texttt{richards_mle}$ and $\texttt{richards_bayes}$ folders include the script for fitting a GLM model with the Richards' curve using MLE or Hamiltonian Monte Carlo via STAN, respectively.
