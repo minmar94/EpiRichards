@@ -14,4 +14,4 @@ The $\textbf{data}$ folder includes:
 The $\textbf{fit}$ folder includes 4 subfolders, each one for each application to a different epidemic with the codes for fitting a GLM model with the Richards' curve.
 
 ## Auxiliary
-The \textbf{richards$\_$mle} and \textbf{richards$\_$bayes} folders include the script for fitting a GLM model with the Richards' curve using MLE or Hamiltonian Monte Carlo via STAN, respectively.
+The **richards\_mle** and **richards\_bayes** folders include the script for fitting a GLM model with the Richards' curve using MLE or Hamiltonian Monte Carlo via STAN, respectively.
