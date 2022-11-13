@@ -7,7 +7,7 @@ rm(list = ls())
 Sys.setlocale(locale = "C") 
 
 # Load richards functions
-source("richards_mle/Fun_DRichFit_Off.R")
+source("richards_mle/Fun_DRichcFit_Off.R")
 
 # Data preparation --------------------------------------------------------
 data("campyDE")
@@ -22,7 +22,7 @@ horizon <- 0 # forecast horizon
 ti_orig_out <- dat_campy$ti_orig %>% unique() # original dates
 
 # Covariates
-X <- cbind(rep(1, nrow(dat_campy)))
+X <- cbind(rep(0, nrow(dat_campy)))
 
 # Name of the variable to model
 varname <- "case"
@@ -61,3 +61,5 @@ richout <- fitTib %>%
   full_join(dat_campy %>% dplyr::select(ti_orig,  varname), by="ti_orig") %>% 
   full_join(horTib, by="ti_orig") %>% 
   set_colnames(value = c("x1", "pc", "pc_all", "ly", "y", "uy")) 
+
+#save(richout, fit, dat_campy, file = "WS/Campylobacter_germany.RData")

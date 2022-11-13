@@ -8,7 +8,7 @@ rm(list = ls())
 Sys.setlocale(locale = "C") 
 
 # Load richards functions
-source("richards_mle/Fun_DRichFit_Off.R")
+source("richards_mle/Fun_DRichcFit_Off.R")
 
 # Data preparation --------------------------------------------------------
 
@@ -28,7 +28,7 @@ horizon <- 0 # forecast horizon
 ti_orig_out <- dati_prov$ti_orig %>% unique() # original dates
 
 # Covariates
-X <- cbind(rep(1, nrow(dati_prov)))
+X <- cbind(rep(0, nrow(dati_prov)))
 
 # Name of the variable to model
 varname <- "NP"
@@ -67,3 +67,5 @@ rome_out <- fitTib %>%
   full_join(dati_prov %>% dplyr::select(ti_orig,  varname), by="ti_orig") %>% 
   full_join(horTib, by="ti_orig") %>% 
   set_colnames(value = c("x1", "pc", "pc_all", "ly", "y", "uy")) 
+
+#save(rome_out, fit, dati_prov, file = "WS/COVID_positives_rome.RData")

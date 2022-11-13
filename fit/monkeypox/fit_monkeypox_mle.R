@@ -27,7 +27,7 @@ horizon <- 3 # forecast horizon
 ti_orig_out <- monkey_data_formodel$ti_orig %>% unique() # original dates
 
 # Covariates
-X <- cbind(rep(1, nrow(monkey_data_formodel)), NULL)
+X <- cbind(rep(0, nrow(monkey_data_formodel)))
 
 # Name of the variable to model
 varname <- "NP"
@@ -83,3 +83,5 @@ for(ctry in 1:length(unique(monkey_data_formodel$region))){
   
 }
 names(richout) <- names(parsout) <- unique(monkey_data_formodel$region)
+
+#save(richout, parsout, monkey_data_formodel, file = "WS/Monkeypox_fit.RData")

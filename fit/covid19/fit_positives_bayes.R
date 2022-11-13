@@ -11,14 +11,14 @@ mc.cores = parallel::detectCores()
 rstan_options(auto_write = TRUE)
 
 # Load richards functions
-stan_model <- stan_model("richards_bayes/RichSTCar_NoCovsNew.stan")
+stan_model <- stan_model("richards_bayes/RichSTCar_NoCovsNew2.stan")
 
 # Data preparation --------------------------------------------------------
 load("data/dati_omicronfive.RData")
 load("data/adjacency_italy.RData")
 load("data/offset_italianRegions.RData")
 
-
+dati <- dati %>% arrange(WW, denominazione_regione)
 # Input model preparation --------------------------------------------------------
 
 Y <- as.integer(dati$NP)
@@ -29,7 +29,9 @@ regIdx <- as.integer(droplevels(dati$denominazione_regione))
 t <- unique(dati$WW) + 1
 Ntimes <- as.integer(length(t))
 
-lOff <- rep(logE, each = Ntimes)
+loffScale <- log(1000)
+lOff <- rep(logE+loffScale, times = Ntimes)
+rGuesses <- dati %>% group_by(denominazione_regione) %>% summarise(sNP=sum(NP)) %>% mutate(rGuess=sNP/exp(logE+loffScale)) %$% rGuess
 
 # Prepare data
 dat1 <- list(
@@ -42,16 +44,34 @@ dat1 <- list(
   "tId" = timeIdx,
   "Nreg" = Nreg, 
   "rId" = regIdx,
-  "lOff" = lOff
+  "lOff" = lOff,
+  "ttilde" = Ntimes/2
 )
 
 # Model fitting -----------------------------------------------------------
 # Chains
 n_chains <- 2
-M <- 25000
+M <- 10000
 n_cores <- mc.cores - 2
 
-# Fit
-fit_Stan <- sampling(stan_model, data = dat1, chains = n_chains, iter = M, cores = n_cores) # 2 hours
+init <- function(chain_id = 1)
+{
+  list(# Coefficients
+    logr = rnorm(1, log(mean(rGuesses)), 1),
+    logh = rnorm(1, 0, 1),
+    c = rnorm(1, max(dati$WW+1)/2, 1),
+    logs = rnorm(1, 0, 1),
+    # AR
+    rho = runif(1, .2, .8),
+    # CAR
+    alpha = runif(1, .3, .7),
+    # Random effects
+    sigma = abs(rnorm(1, 0, .01)))
+}
 
-summary(fit_Stan, pars = c("logbase", "logr", "logh", "c", "logs", "alpha", "rho"))
+# Fit
+fit_Stan <- sampling(stan_model, data = dat1, chains = n_chains, iter = M, cores = n_cores, init = init,
+                     control = list(max_treedepth=8, adapt_delta = 0.9)) 
+
+#summary(fit_Stan, pars = c("logbase", "logr", "logh", "c", "logs", "alpha", "rho"))
+#save(fit_Stan, file = "WS/COVID_omicronfive.RData")

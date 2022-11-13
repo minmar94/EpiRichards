@@ -8,7 +8,7 @@ rm(list = ls())
 Sys.setlocale(locale = "C") 
 
 # Load richards functions
-source("richards_mle/Fun_DRichFit_Off.R")
+source("richards_mle/Fun_DRichcFit_Off.R")
 
 # Data preparation --------------------------------------------------------
 # Read data from github repo
@@ -29,7 +29,7 @@ horizon <- 0 # forecast horizon
 ti_orig_out <- dati_ita$ti_orig %>% unique() # original dates
 
 # Covariates
-X <- cbind(rep(1, nrow(dati_ita)), dati_ita$isMonday, log(dati_ita$TI_lag))
+X <- cbind(dati_ita$isMonday, log(dati_ita$TI_lag))
 
 # Name of the variable to model
 varname <- "Nuovi_decessi"
@@ -68,3 +68,5 @@ ita_out <- fitTib %>%
   full_join(dati_ita %>% dplyr::select(ti_orig,  varname), by="ti_orig") %>% 
   full_join(horTib, by="ti_orig") %>% 
   set_colnames(value = c("x1", "pc", "pc_all", "ly", "y", "uy")) 
+
+#save(ita_out, fit, dati_ita, file = "WS/COVID_deceased_italy.RData")
